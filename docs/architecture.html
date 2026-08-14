@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sage — System Architecture</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #e2e8f0; line-height: 1.7; padding: 50px 20px; }
+.container { max-width: 1100px; margin: 0 auto; }
+h1 { font-size: 2.5rem; font-weight: 300; margin-bottom: 8px; background: linear-gradient(to right, #10b981, #06b6d4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 50px; }
+h2 { font-size: 1.6rem; color: #f1f5f9; margin-top: 60px; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #1e293b; }
+h3 { font-size: 1.2rem; color: #10b981; margin-top: 30px; margin-bottom: 12px; }
+p { color: #94a3b8; margin-bottom: 14px; }
+strong { color: #e2e8f0; }
+code { background: #1e293b; color: #67e8f9; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; font-family: 'JetBrains Mono', monospace; }
+ul, ol { margin-left: 20px; margin-bottom: 16px; color: #94a3b8; }
+li { margin-bottom: 6px; }
+
+/* Architecture layers */
+.layer { margin: 30px 0; padding: 24px; border-radius: 16px; border: 1px solid #1e293b; }
+.layer-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 16px; }
+.layer.frontend { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
+.layer.frontend .layer-title { color: #3b82f6; }
+.layer.api { border-color: #06b6d4; background: rgba(6,182,212,0.05); }
+.layer.api .layer-title { color: #06b6d4; }
+.layer.agents { border-color: #8b5cf6; background: rgba(139,92,246,0.05); }
+.layer.agents .layer-title { color: #8b5cf6; }
+.layer.data { border-color: #f59e0b; background: rgba(245,158,11,0.05); }
+.layer.data .layer-title { color: #f59e0b; }
+.layer.llm { border-color: #ec4899; background: rgba(236,72,153,0.05); }
+.layer.llm .layer-title { color: #ec4899; }
+
+/* Boxes inside layers */
+.boxes { display: flex; gap: 12px; flex-wrap: wrap; }
+.box { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 10px; padding: 14px 18px; min-width: 130px; flex: 1; }
+.box h4 { font-size: 0.85rem; color: #f1f5f9; margin-bottom: 4px; }
+.box p { font-size: 0.75rem; color: #64748b; margin: 0; }
+
+/* Pipeline flow */
+.pipeline { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 20px 0; }
+.pipe-node { background: #1a1a2e; border: 1px solid #2a2a4a; border-radius: 12px; padding: 16px 20px; text-align: center; min-width: 120px; }
+.pipe-node.active { border-color: #8b5cf6; }
+.pipe-node .icon { font-size: 1.4rem; margin-bottom: 6px; }
+.pipe-node .name { font-size: 0.8rem; font-weight: 600; color: #e0e0f0; }
+.pipe-node .desc { font-size: 0.68rem; color: #6666a0; margin-top: 3px; }
+.pipe-arrow { color: #38bdf8; font-size: 1.2rem; font-weight: bold; }
+
+/* Flow diagram */
+.flow { margin: 40px 0; padding: 30px; background: #0a0a12; border-radius: 16px; border: 1px solid #1e1e2e; }
+.flow h3 { color: #8b5cf6; margin-top: 0; }
+.flow-steps { margin-top: 16px; }
+.flow-step { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+.flow-num { background: #8b5cf6; color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
+.flow-text { color: #b0b0c0; font-size: 0.9rem; }
+.flow-text strong { color: #e0e0f0; }
+
+/* Tech table */
+table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid #1e293b; }
+th { color: #06b6d4; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+td { color: #94a3b8; font-size: 0.9rem; }
+td:first-child { color: #e2e8f0; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Sage — System Architecture</h1>
+<p class="subtitle">Multi-Agent RAG Pipeline • AWS Strands Agents SDK • Hybrid Search • Real-time Streaming</p>
+
+<!-- ========== AGENT PIPELINE ========== -->
+<h2>🔀 Agent Pipeline</h2>
+<p>Every user query flows through this sequential pipeline. Each agent has a single responsibility.</p>
+
+<div class="pipeline">
+    <div class="pipe-node">
+        <div class="icon">❓</div>
+        <div class="name">User Query</div>
+        <div class="desc">"How many leaves?"</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-node">
+        <div class="icon">🛡️</div>
+        <div class="name">Input Validator</div>
+        <div class="desc">Length + Injection Guard</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-node active">
+        <div class="icon">🔀</div>
+        <div class="name">Router Agent</div>
+        <div class="desc">HR vs Non-HR (LLM)</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-node active">
+        <div class="icon">🔍</div>
+        <div class="name">Retriever Agent</div>
+        <div class="desc">Vector + BM25 + RRF</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-node active">
+        <div class="icon">✍️</div>
+        <div class="name">Answer Agent</div>
+        <div class="desc">Cited Generation</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-node active">
+        <div class="icon">✅</div>
+        <div class="name">Validator Agent</div>
+        <div class="desc">Groundedness Check</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-node">
+        <div class="icon">⚡</div>
+        <div class="name">Stream Response</div>
+        <div class="desc">Token-by-token</div>
+    </div>
+</div>
+
+<!-- ========== FULL ARCHITECTURE LAYERS ========== -->
+<h2>🏗️ Full System Architecture</h2>
+
+<div class="layer frontend">
+    <div class="layer-title">Frontend Layer</div>
+    <div class="boxes">
+        <div class="box"><h4>React 19 + TypeScript</h4><p>Component-based UI</p></div>
+        <div class="box"><h4>Tailwind CSS 4</h4><p>Dark/Light theme</p></div>
+        <div class="box"><h4>WebSocket Client</h4><p>Real-time token streaming</p></div>
+        <div class="box"><h4>HTTP Fallback</h4><p>POST /api/chat backup</p></div>
+        <div class="box"><h4>JWT Auth</h4><p>Login, Register, RBAC</p></div>
+        <div class="box"><h4>Admin Panel</h4><p>Analytics &amp; management</p></div>
+    </div>
+</div>
+
+<div class="layer api">
+    <div class="layer-title">API Layer — FastAPI + Uvicorn</div>
+    <div class="boxes">
+        <div class="box"><h4>WS /api/chat/stream</h4><p>WebSocket streaming endpoint</p></div>
+        <div class="box"><h4>POST /api/chat</h4><p>Synchronous chat endpoint</p></div>
+        <div class="box"><h4>Rate Limiter</h4><p>20 req/min sliding window</p></div>
+        <div class="box"><h4>CORS Middleware</h4><p>Origin validation</p></div>
+        <div class="box"><h4>Error Middleware</h4><p>Sanitized responses + logging</p></div>
+        <div class="box"><h4>Auth Routes</h4><p>JWT issue/verify</p></div>
+    </div>
+</div>
+
+<div class="layer agents">
+    <div class="layer-title">Agent Orchestration — AWS Strands Agents SDK</div>
+    <div class="boxes">
+        <div class="box"><h4>Router Agent</h4><p>Strands + OpenAI model<br>HR/Non-HR classification</p></div>
+        <div class="box"><h4>Retriever Agent</h4><p>Hybrid search orchestrator<br>Vector + BM25 + RRF</p></div>
+        <div class="box"><h4>Answer Agent</h4><p>Strands + OpenAI model<br>Cited answer generation</p></div>
+        <div class="box"><h4>Validator Agent</h4><p>Groundedness checker<br>Retry with feedback</p></div>
+        <div class="box"><h4>Session Store</h4><p>Conversation history<br>Last 5 messages context</p></div>
+    </div>
+</div>
+
+<div class="layer data">
+    <div class="layer-title">Retrieval &amp; Data Layer</div>
+    <div class="boxes">
+        <div class="box"><h4>ChromaDB</h4><p>Vector store (cosine)<br>384-dim embeddings</p></div>
+        <div class="box"><h4>BM25 Index</h4><p>Keyword search<br>TF-IDF term ranking</p></div>
+        <div class="box"><h4>Sentence-Transformers</h4><p>all-MiniLM-L6-v2<br>Query + doc embeddings</p></div>
+        <div class="box"><h4>PostgreSQL</h4><p>Users, sessions<br>Feedback, messages</p></div>
+        <div class="box"><h4>Policy Documents</h4><p>5 markdown files<br>38 chunks indexed</p></div>
+    </div>
+</div>
+
+<div class="layer llm">
+    <div class="layer-title">LLM Provider</div>
+    <div class="boxes">
+        <div class="box"><h4>OpenAI-Compatible Proxy</h4><p>Claude Sonnet model</p></div>
+        <div class="box"><h4>Strands OpenAIModel</h4><p>Model adapter layer</p></div>
+        <div class="box"><h4>Langfuse</h4><p>LLM observability + tracing</p></div>
+        <div class="box"><h4>X-Request-ID</h4><p>End-to-end request tracing</p></div>
+    </div>
+</div>
+
+<!-- ========== DATA FLOW ========== -->
+<h2>🔄 End-to-End Data Flow</h2>
+<div class="flow">
+    <h3>What happens when you ask "How many casual leaves do I get?"</h3>
+    <div class="flow-steps">
+        <div class="flow-step"><div class="flow-num">1</div><div class="flow-text"><strong>Input Validation</strong> — Query checked for length (1–1000 chars) and scanned for prompt injection patterns</div></div>
+        <div class="flow-step"><div class="flow-num">2</div><div class="flow-text"><strong>Router Agent</strong> — LLM classifies as HR-related (confidence: 0.95, category: "leave")</div></div>
+        <div class="flow-step"><div class="flow-num">3</div><div class="flow-text"><strong>Query Embedding</strong> — Encoded into 384-dimensional vector using all-MiniLM-L6-v2</div></div>
+        <div class="flow-step"><div class="flow-num">4</div><div class="flow-text"><strong>Vector Search</strong> — ChromaDB returns top-10 semantically similar chunks (cosine similarity)</div></div>
+        <div class="flow-step"><div class="flow-num">5</div><div class="flow-text"><strong>BM25 Search</strong> — Keyword index returns top-10 chunks by term frequency</div></div>
+        <div class="flow-step"><div class="flow-num">6</div><div class="flow-text"><strong>RRF Fusion</strong> — Both lists merged, deduplicated, top-5 chunks selected via Reciprocal Rank Fusion</div></div>
+        <div class="flow-step"><div class="flow-num">7</div><div class="flow-text"><strong>Answer Generation</strong> — LLM receives chunks + query + conversation history → generates cited answer</div></div>
+        <div class="flow-step"><div class="flow-num">8</div><div class="flow-text"><strong>Validation</strong> — Validator checks if every claim is supported by chunks; retries if hallucinated</div></div>
+        <div class="flow-step"><div class="flow-num">9</div><div class="flow-text"><strong>Streaming</strong> — Answer streamed token-by-token via WebSocket to the frontend</div></div>
+        <div class="flow-step"><div class="flow-num">10</div><div class="flow-text"><strong>Storage</strong> — Exchange saved to session history for follow-up context resolution</div></div>
+    </div>
+</div>
+
+<!-- ========== HYBRID SEARCH ========== -->
+<h2>🔎 Hybrid Search Strategy</h2>
+<p>Sage doesn't rely on a single retrieval method. It combines two complementary approaches for better recall and precision:</p>
+
+<table>
+    <thead><tr><th>Method</th><th>How it works</th><th>Strength</th></tr></thead>
+    <tbody>
+        <tr><td>Vector Search (ChromaDB)</td><td>Encodes query into 384-dim embedding, finds cosine-similar chunks</td><td>Semantic understanding — finds relevant chunks even without exact keyword match</td></tr>
+        <tr><td>BM25 Keyword Search</td><td>TF-IDF based term frequency ranking over tokenized chunks</td><td>Exact term matching — critical for "Band B notice period" style queries</td></tr>
+        <tr><td>Reciprocal Rank Fusion</td><td>score = Σ(1 / (k + rank_i)) — merges both lists, deduplicates</td><td>Best of both worlds — semantic + keyword precision in top-5 results</td></tr>
+    </tbody>
+</table>
+
+<!-- ========== TECH STACK ========== -->
+<h2>🛠️ Technology Stack</h2>
+<table>
+    <thead><tr><th>Component</th><th>Technology</th><th>Purpose</th></tr></thead>
+    <tbody>
+        <tr><td>Frontend</td><td>React 19, TypeScript, Tailwind 4, Vite</td><td>Responsive chat UI with streaming</td></tr>
+        <tr><td>Backend</td><td>FastAPI, Uvicorn, Python</td><td>Async API with WebSocket support</td></tr>
+        <tr><td>Agent Framework</td><td>AWS Strands Agents SDK</td><td>LLM agent orchestration</td></tr>
+        <tr><td>Vector Store</td><td>ChromaDB (persistent)</td><td>Semantic similarity search</td></tr>
+        <tr><td>Embeddings</td><td>Sentence-Transformers (all-MiniLM-L6-v2)</td><td>384-dim text embeddings</td></tr>
+        <tr><td>Keyword Search</td><td>rank-bm25</td><td>TF-IDF keyword retrieval</td></tr>
+        <tr><td>Database</td><td>PostgreSQL</td><td>Users, sessions, feedback</td></tr>
+        <tr><td>Auth</td><td>PyJWT + bcrypt</td><td>JWT tokens, password hashing</td></tr>
+        <tr><td>Streaming</td><td>WebSocket + HTTP fallback</td><td>Real-time token delivery</td></tr>
+        <tr><td>Observability</td><td>Langfuse</td><td>LLM call tracing and metrics</td></tr>
+        <tr><td>Containerization</td><td>Docker</td><td>Deployment packaging</td></tr>
+    </tbody>
+</table>
+
+<!-- ========== SECURITY ========== -->
+<h2>🔐 Security Architecture</h2>
+<div class="boxes" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
+    <div class="box"><h4>JWT Authentication</h4><p>24h expiry, HS256 signed<br>Role-based access control</p></div>
+    <div class="box"><h4>Prompt Injection Guard</h4><p>Pattern detection layer<br>Blocks adversarial inputs</p></div>
+    <div class="box"><h4>Rate Limiting</h4><p>20 req/min per user<br>Sliding window, in-memory</p></div>
+    <div class="box"><h4>Error Sanitization</h4><p>No stack traces exposed<br>Structured error logging</p></div>
+    <div class="box"><h4>Input Validation</h4><p>1-1000 char limit<br>Pydantic schema enforcement</p></div>
+</div>
+
+<!-- ========== FILE STRUCTURE ========== -->
+<h2>📁 Project Structure</h2>
+<pre style="background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:24px;color:#94a3b8;font-size:0.85rem;line-height:1.8;overflow-x:auto;">
+<span style="color:#f1f5f9;">sage/</span>
+├── <span style="color:#3b82f6;">backend/</span>
+│   ├── <span style="color:#8b5cf6;">agents/</span>
+│   │   ├── router_agent.py        <span style="color:#64748b;"># HR vs Non-HR classification (Strands + LLM)</span>
+│   │   ├── retriever_agent.py     <span style="color:#64748b;"># Hybrid search: Vector + BM25 + RRF</span>
+│   │   ├── answer_agent.py        <span style="color:#64748b;"># Cited answer generation (Strands + LLM)</span>
+│   │   └── validator_agent.py     <span style="color:#64748b;"># Groundedness check + retry</span>
+│   ├── <span style="color:#06b6d4;">api/</span>
+│   │   ├── routes.py              <span style="color:#64748b;"># POST /api/chat + WebSocket /chat/stream</span>
+│   │   ├── auth_routes.py         <span style="color:#64748b;"># Login, Register, /me</span>
+│   │   ├── admin_routes.py        <span style="color:#64748b;"># Admin analytics endpoints</span>
+│   │   └── pdf_routes.py          <span style="color:#64748b;"># PDF upload + per-session search</span>
+│   ├── <span style="color:#10b981;">auth/</span>
+│   │   ├── jwt_handler.py         <span style="color:#64748b;"># Token create/verify (HS256, 24h)</span>
+│   │   ├── password.py            <span style="color:#64748b;"># bcrypt hash/verify</span>
+│   │   └── dependencies.py        <span style="color:#64748b;"># FastAPI auth dependency</span>
+│   ├── <span style="color:#f59e0b;">ingestion/</span>
+│   │   ├── pipeline.py            <span style="color:#64748b;"># Read → Chunk → Embed → Store</span>
+│   │   ├── chunker.py             <span style="color:#64748b;"># Markdown section-based splitting</span>
+│   │   └── bm25_builder.py        <span style="color:#64748b;"># BM25 index construction</span>
+│   ├── <span style="color:#ec4899;">services/</span>
+│   │   ├── session_store.py       <span style="color:#64748b;"># In-memory + DB session history</span>
+│   │   ├── injection_guard.py     <span style="color:#64748b;"># Prompt injection detection</span>
+│   │   ├── query_validator.py     <span style="color:#64748b;"># Input length/format validation</span>
+│   │   └── pdf_store.py           <span style="color:#64748b;"># Per-user PDF collection management</span>
+│   ├── <span style="color:#f59e0b;">models/</span>
+│   │   ├── schemas.py             <span style="color:#64748b;"># Pydantic request/response schemas</span>
+│   │   └── db_models.py           <span style="color:#64748b;"># SQLAlchemy ORM (User, Session, etc.)</span>
+│   ├── <span style="color:#64748b;">tests/</span>
+│   │   └── unit/                  <span style="color:#64748b;"># 14 unit test files (pytest)</span>
+│   ├── main.py                    <span style="color:#64748b;"># FastAPI app + startup ingestion</span>
+│   ├── config.py                  <span style="color:#64748b;"># Env var loading + validation</span>
+│   ├── database.py                <span style="color:#64748b;"># PostgreSQL connection (SQLAlchemy)</span>
+│   ├── middleware.py              <span style="color:#64748b;"># Error handling + sanitization</span>
+│   ├── rate_limiter.py            <span style="color:#64748b;"># Sliding window rate limiter</span>
+│   ├── tracing.py                 <span style="color:#64748b;"># Langfuse observability</span>
+│   └── requirements.txt           <span style="color:#64748b;"># Python dependencies</span>
+├── <span style="color:#3b82f6;">frontend/</span>
+│   ├── <span style="color:#8b5cf6;">src/</span>
+│   │   ├── <span style="color:#06b6d4;">components/</span>
+│   │   │   ├── ChatArea.tsx       <span style="color:#64748b;"># Message list display</span>
+│   │   │   ├── ChatInput.tsx      <span style="color:#64748b;"># Input bar + source toggle</span>
+│   │   │   ├── MessageBubble.tsx  <span style="color:#64748b;"># Individual message + citations</span>
+│   │   │   ├── LoginPage.tsx      <span style="color:#64748b;"># Auth UI (login/register)</span>
+│   │   │   ├── AdminPanel.tsx     <span style="color:#64748b;"># Admin dashboard</span>
+│   │   │   ├── Sidebar.tsx        <span style="color:#64748b;"># Chat history + suggestions</span>
+│   │   │   └── FeedbackButtons.tsx<span style="color:#64748b;"># Thumbs up/down per response</span>
+│   │   ├── <span style="color:#10b981;">hooks/</span>
+│   │   │   ├── useWebSocket.ts    <span style="color:#64748b;"># WebSocket connection manager</span>
+│   │   │   ├── useChat.ts         <span style="color:#64748b;"># Chat state + streaming logic</span>
+│   │   │   ├── useAuth.ts         <span style="color:#64748b;"># JWT login/logout/token</span>
+│   │   │   └── useSession.ts      <span style="color:#64748b;"># Session ID management</span>
+│   │   ├── types/index.ts         <span style="color:#64748b;"># TypeScript interfaces</span>
+│   │   └── App.tsx                <span style="color:#64748b;"># Main app + routing logic</span>
+│   ├── package.json
+│   └── vite.config.ts
+├── <span style="color:#f59e0b;">data/policies/</span>
+│   ├── leave_policy.md            <span style="color:#64748b;"># Casual, sick, earned, maternity leave</span>
+│   ├── wfh_policy.md              <span style="color:#64748b;"># Work-from-home rules</span>
+│   ├── notice_period.md           <span style="color:#64748b;"># Band A/B/C notice periods</span>
+│   ├── reimbursements.md          <span style="color:#64748b;"># Internet, travel, health, gym</span>
+│   └── code_of_conduct.md         <span style="color:#64748b;"># Moonlighting, NDA, dress code</span>
+└── chroma_data/                   <span style="color:#64748b;"># Persistent vector store (gitignored)</span>
+</pre>
+
+</div>
+</body>
+</html>

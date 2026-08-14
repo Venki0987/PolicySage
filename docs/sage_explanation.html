@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sage — HR Policy Q&A Bot | Project Explanation</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e6;
+            line-height: 1.7;
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(135deg, #0f1923 0%, #0a0a0f 50%, #120f1a 100%);
+            padding: 80px 40px;
+            text-align: center;
+            border-bottom: 1px solid #1a1a2e;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(56, 189, 248, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(139, 92, 246, 0.03) 0%, transparent 50%);
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #38bdf8, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: #8888a0;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .badge {
+            display: inline-block;
+            margin-top: 24px;
+            padding: 8px 20px;
+            border-radius: 100px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            font-size: 0.85rem;
+            font-weight: 500;
+            position: relative;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* Section */
+        section {
+            margin-bottom: 80px;
+        }
+        section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f0f0f5;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        section h2 .icon {
+            font-size: 1.5rem;
+        }
+        section .section-desc {
+            color: #8888a0;
+            font-size: 1.05rem;
+            margin-bottom: 32px;
+            max-width: 800px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #d0d0e0;
+            margin: 28px 0 12px;
+        }
+        p {
+            margin-bottom: 16px;
+            color: #b0b0c0;
+        }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .card {
+            background: #111118;
+            border: 1px solid #1e1e2e;
+            border-radius: 16px;
+            padding: 28px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .card:hover {
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+        }
+        .card h4 {
+            font-size: 1.1rem;
+            color: #f0f0f5;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card p {
+            font-size: 0.95rem;
+            color: #8888a0;
+            margin: 0;
+        }
+
+        /* Architecture diagram */
+        .arch-container {
+            background: #0d0d14;
+            border: 1px solid #1e1e2e;
+            border-radius: 20px;
+            padding: 48px 32px;
+            overflow-x: auto;
+        }
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            min-width: 700px;
+        }
+        .pipe-node {
+            background: #16162a;
+            border: 1px solid #2a2a4a;
+            border-radius: 12px;
+            padding: 20px 24px;
+            text-align: center;
+            min-width: 140px;
+            transition: all 0.2s;
+        }
+        .pipe-node:hover {
+            border-color: #8b5cf6;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.1);
+        }
+        .pipe-node .node-icon { font-size: 1.8rem; margin-bottom: 8px; }
+        .pipe-node .node-title { font-size: 0.9rem; font-weight: 600; color: #e0e0f0; }
+        .pipe-node .node-desc { font-size: 0.75rem; color: #6666a0; margin-top: 4px; }
+        .pipe-arrow {
+            color: #38bdf8;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        /* Full architecture */
+        .full-arch {
+            margin-top: 40px;
+            background: #0d0d14;
+            border: 1px solid #1e1e2e;
+            border-radius: 20px;
+            padding: 40px;
+        }
+        .arch-layer {
+            margin-bottom: 32px;
+            padding-bottom: 32px;
+            border-bottom: 1px solid #1a1a2e;
+        }
+        .arch-layer:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .arch-layer h4 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #38bdf8;
+            margin-bottom: 16px;
+        }
+        .arch-components {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .arch-chip {
+            background: #16162a;
+            border: 1px solid #2a2a4a;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 0.85rem;
+            color: #c0c0d0;
+        }
+
+        /* Comparison table */
+        .comparison {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 24px;
+        }
+        .comparison th, .comparison td {
+            text-align: left;
+            padding: 16px 20px;
+            border-bottom: 1px solid #1a1a2e;
+        }
+        .comparison th {
+            background: #111118;
+            color: #38bdf8;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .comparison td {
+            color: #b0b0c0;
+            font-size: 0.95rem;
+        }
+        .comparison tr:hover td {
+            background: #0d0d14;
+        }
+        .check { color: #34d399; }
+        .cross { color: #f87171; }
+
+        /* Tech stack */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .tech-item {
+            background: #111118;
+            border: 1px solid #1e1e2e;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .tech-item .tech-name {
+            font-weight: 600;
+            color: #e0e0f0;
+            font-size: 0.95rem;
+        }
+        .tech-item .tech-role {
+            font-size: 0.8rem;
+            color: #6666a0;
+            margin-top: 4px;
+        }
+
+        /* Highlight box */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.05), rgba(139, 92, 246, 0.05));
+            border: 1px solid rgba(56, 189, 248, 0.15);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 24px 0;
+        }
+        .highlight-box h4 {
+            color: #38bdf8;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        .highlight-box p {
+            color: #a0a0c0;
+        }
+
+        /* List */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            color: #b0b0c0;
+        }
+        ul li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #8b5cf6;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid #1a1a2e;
+            color: #4a4a6a;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding: 48px 20px; }
+            .hero h1 { font-size: 2.2rem; }
+            .container { padding: 40px 20px; }
+            .pipeline { flex-direction: column; min-width: unset; }
+            .pipe-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Hero Section -->
+<div class="hero">
+    <h1>Sage — HR Policy Q&A Bot</h1>
+    <p class="subtitle">
+        A multi-agent RAG system that gives employees instant, cited answers to HR policy questions — 
+        powered by AWS Strands Agents SDK, hybrid search, and streaming AI responses.
+    </p>
+    <span class="badge">Multi-Agent • RAG • Strands SDK • Real-time Streaming</span>
+</div>
+
+<div class="container">
+
+    <!-- What & Why -->
+    <section>
+        <h2><span class="icon">🎯</span> What is Sage?</h2>
+        <p class="section-desc">Sage is a production-grade HR policy chatbot that answers employee questions using company policy documents as its single source of truth.</p>
+
+        <div class="card-grid">
+            <div class="card">
+                <h4>📋 The Problem</h4>
+                <p>Employees constantly ask HR the same questions — leave balance, notice period, WFH rules. HR teams spend hours answering repetitive queries instead of doing strategic work.</p>
+            </div>
+            <div class="card">
+                <h4>💡 The Solution</h4>
+                <p>Sage ingests company HR policy documents, understands them semantically, and gives instant cited answers 24/7. Every answer links back to the exact policy section it came from.</p>
+            </div>
+            <div class="card">
+                <h4>🏢 Real-World Relevance</h4>
+                <p>RAG-based Q&A is the #1 enterprise AI use case in 2024-2026. Every company with internal docs needs this. Sage demonstrates the full production pattern.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture -->
+    <section>
+        <h2><span class="icon">🏗️</span> Multi-Agent Architecture</h2>
+        <p class="section-desc">Sage uses a pipeline of specialized agents — each does one job well. The query flows through them sequentially.</p>
+
+        <div class="arch-container">
+            <div class="pipeline">
+                <div class="pipe-node">
+                    <div class="node-icon">❓</div>
+                    <div class="node-title">User Query</div>
+                    <div class="node-desc">"How many casual leaves?"</div>
+                </div>
+                <div class="pipe-arrow">→</div>
+                <div class="pipe-node">
+                    <div class="node-icon">🛡️</div>
+                    <div class="node-title">Input Validator</div>
+                    <div class="node-desc">Length check + injection guard</div>
+                </div>
+                <div class="pipe-arrow">→</div>
+                <div class="pipe-node">
+                    <div class="node-icon">🔀</div>
+                    <div class="node-title">Router Agent</div>
+                    <div class="node-desc">HR vs Non-HR classification</div>
+                </div>
+                <div class="pipe-arrow">→</div>
+                <div class="pipe-node">
+                    <div class="node-icon">🔍</div>
+                    <div class="node-title">Retriever Agent</div>
+                    <div class="node-desc">Hybrid search (Vector + BM25)</div>
+                </div>
+                <div class="pipe-arrow">→</div>
+                <div class="pipe-node">
+                    <div class="node-icon">✍️</div>
+                    <div class="node-title">Answer Agent</div>
+                    <div class="node-desc">Generates cited answer</div>
+                </div>
+                <div class="pipe-arrow">→</div>
+                <div class="pipe-node">
+                    <div class="node-icon">✅</div>
+                    <div class="node-title">Validator Agent</div>
+                    <div class="node-desc">Checks groundedness</div>
+                </div>
+            </div>
+        </div>
+
+        <h3>Agent Details</h3>
+        <div class="card-grid">
+            <div class="card">
+                <h4>🔀 Router Agent</h4>
+                <p>Uses Strands + Gemini to classify queries. HR queries proceed to retrieval; non-HR queries get a polite rejection. Falls back safely on failure (treats as non-HR).</p>
+            </div>
+            <div class="card">
+                <h4>🔍 Retriever Agent</h4>
+                <p>Performs hybrid search combining ChromaDB vector similarity and BM25 keyword matching, merged via Reciprocal Rank Fusion (RRF). Returns top-5 most relevant policy chunks.</p>
+            </div>
+            <div class="card">
+                <h4>✍️ Answer Agent</h4>
+                <p>Uses Strands + OpenAI-compatible LLM to generate concise, cited answers strictly grounded in retrieved chunks. Includes conversation history for follow-up resolution.</p>
+            </div>
+            <div class="card">
+                <h4>✅ Validator Agent</h4>
+                <p>Checks if the generated answer is actually supported by the retrieved chunks. If not grounded, triggers a retry with corrective feedback to improve accuracy.</p>
+            </div>
+        </div>
+
+        <!-- Full Stack Architecture -->
+        <div class="full-arch">
+            <h3 style="margin-top:0;">Full System Architecture</h3>
+            <div class="arch-layer">
+                <h4>Frontend Layer</h4>
+                <div class="arch-components">
+                    <div class="arch-chip">React 19 + TypeScript</div>
+                    <div class="arch-chip">Tailwind CSS 4</div>
+                    <div class="arch-chip">WebSocket (real-time streaming)</div>
+                    <div class="arch-chip">HTTP POST fallback</div>
+                    <div class="arch-chip">JWT Auth</div>
+                    <div class="arch-chip">Dark/Light Theme</div>
+                </div>
+            </div>
+            <div class="arch-layer">
+                <h4>API Layer</h4>
+                <div class="arch-components">
+                    <div class="arch-chip">FastAPI + Uvicorn</div>
+                    <div class="arch-chip">WebSocket /chat/stream</div>
+                    <div class="arch-chip">POST /api/chat</div>
+                    <div class="arch-chip">Rate Limiter (20 req/min)</div>
+                    <div class="arch-chip">Error Middleware</div>
+                    <div class="arch-chip">CORS</div>
+                </div>
+            </div>
+            <div class="arch-layer">
+                <h4>Agent Orchestration Layer</h4>
+                <div class="arch-components">
+                    <div class="arch-chip">AWS Strands Agents SDK</div>
+                    <div class="arch-chip">Router Agent (Gemini)</div>
+                    <div class="arch-chip">Answer Agent (Claude/Sonnet)</div>
+                    <div class="arch-chip">Validator Agent</div>
+                    <div class="arch-chip">Session Store (history)</div>
+                </div>
+            </div>
+            <div class="arch-layer">
+                <h4>Retrieval Layer</h4>
+                <div class="arch-components">
+                    <div class="arch-chip">ChromaDB (Vector Store)</div>
+                    <div class="arch-chip">BM25 (Keyword Index)</div>
+                    <div class="arch-chip">Reciprocal Rank Fusion</div>
+                    <div class="arch-chip">Sentence-Transformers (all-MiniLM-L6-v2)</div>
+                </div>
+            </div>
+            <div class="arch-layer">
+                <h4>Data & Storage Layer</h4>
+                <div class="arch-components">
+                    <div class="arch-chip">PostgreSQL (users, sessions, feedback)</div>
+                    <div class="arch-chip">ChromaDB PersistentClient</div>
+                    <div class="arch-chip">Markdown Policy Documents</div>
+                    <div class="arch-chip">PDF Upload Support</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hybrid Search -->
+    <section>
+        <h2><span class="icon">🔎</span> Hybrid Search: Why Not Just Embeddings?</h2>
+        <p class="section-desc">Most RAG demos use only vector similarity search. Sage combines two approaches for significantly better retrieval quality.</p>
+
+        <div class="card-grid">
+            <div class="card">
+                <h4>📐 Vector Search (ChromaDB)</h4>
+                <p>Encodes queries into 384-dim embeddings using all-MiniLM-L6-v2. Finds semantically similar chunks even if they don't share exact keywords. Great for "what are the WFH rules?" → finds "work from home policy".</p>
+            </div>
+            <div class="card">
+                <h4>📝 BM25 Keyword Search</h4>
+                <p>Classic TF-IDF-based ranking that excels at exact term matching. Critical for specific queries like "Band B notice period" where the exact terms matter.</p>
+            </div>
+            <div class="card">
+                <h4>🔗 Reciprocal Rank Fusion (RRF)</h4>
+                <p>Merges both result lists using: score = Σ(1 / (k + rank_i)). Deduplicates by chunk ID and returns top-5. Gets the best of both worlds — semantic understanding + keyword precision.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Strands vs LangGraph -->
+    <section>
+        <h2><span class="icon">⚡</span> Why Strands SDK Instead of LangGraph?</h2>
+        <p class="section-desc">This was a deliberate architectural decision based on the nature of the agent pipeline.</p>
+
+        <div class="highlight-box">
+            <h4>The Key Insight</h4>
+            <p>Sage's agent pipeline is <strong>linear and sequential</strong>: Classify → Retrieve → Generate → Validate. There are no cycles, no dynamic branching where agents call each other in loops, and no complex state machines. For this pattern, Strands is the right tool.</p>
+        </div>
+
+        <table class="comparison">
+            <thead>
+                <tr>
+                    <th>Aspect</th>
+                    <th>AWS Strands Agents SDK</th>
+                    <th>LangGraph</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Complexity</strong></td>
+                    <td>Minimal — <code>Agent(model, prompt)</code> and call it</td>
+                    <td>Define StateGraph, nodes, edges, conditional edges</td>
+                </tr>
+                <tr>
+                    <td><strong>Best for</strong></td>
+                    <td>Sequential pipelines, single-purpose agents</td>
+                    <td>Cyclical workflows, agents that loop/branch dynamically</td>
+                </tr>
+                <tr>
+                    <td><strong>Orchestration</strong></td>
+                    <td>Plain Python (async/await, if/else)</td>
+                    <td>Graph-based state machine</td>
+                </tr>
+                <tr>
+                    <td><strong>Boilerplate</strong></td>
+                    <td><span class="check">✓ Minimal</span> — ~5 lines to create an agent</td>
+                    <td><span class="cross">✗ Heavy</span> — graph definition, state schemas, node functions</td>
+                </tr>
+                <tr>
+                    <td><strong>Dependencies</strong></td>
+                    <td>Lightweight — just <code>strands-agents</code></td>
+                    <td>Heavy — entire LangChain ecosystem</td>
+                </tr>
+                <tr>
+                    <td><strong>Model providers</strong></td>
+                    <td>Google Gemini, OpenAI, Bedrock, Anthropic</td>
+                    <td>LangChain-wrapped providers</td>
+                </tr>
+                <tr>
+                    <td><strong>Flexibility</strong></td>
+                    <td>Full control over flow, no framework lock-in</td>
+                    <td>Must fit into graph paradigm</td>
+                </tr>
+                <tr>
+                    <td><strong>When to avoid</strong></td>
+                    <td>Complex multi-turn agent loops with dynamic routing</td>
+                    <td>Simple sequential pipelines (overkill)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Code Comparison</h3>
+        <div class="card-grid">
+            <div class="card">
+                <h4>Strands (What we use)</h4>
+                <p style="font-family: monospace; font-size: 0.82rem; white-space: pre; color: #a0c0a0;">
+from strands import Agent
+from strands.models.gemini import GeminiModel
+
+agent = Agent(
+    model=GeminiModel(model_id="gemini-2.5-flash"),
+    system_prompt="Classify as HR or not..."
+)
+result = agent("Is WFH allowed on Fridays?")
+                </p>
+            </div>
+            <div class="card">
+                <h4>LangGraph (What we avoided)</h4>
+                <p style="font-family: monospace; font-size: 0.82rem; white-space: pre; color: #c0a0a0;">
+from langgraph.graph import StateGraph
+from typing import TypedDict
+
+class State(TypedDict):
+    query: str
+    is_hr: bool
+    chunks: list
+    answer: str
+
+graph = StateGraph(State)
+graph.add_node("classify", classify_fn)
+graph.add_node("retrieve", retrieve_fn)
+graph.add_node("answer", answer_fn)
+graph.add_edge("classify", "retrieve")
+graph.add_conditional_edges(...)
+app = graph.compile()
+                </p>
+            </div>
+        </div>
+
+        <div class="highlight-box">
+            <h4>💬 Interview-Ready Answer</h4>
+            <p>"I chose AWS Strands Agents SDK because my pipeline is sequential — classify, retrieve, generate, validate. Strands gives a clean agent abstraction with <code>Agent(model, prompt)</code> and I orchestrate them with plain Python async/await. LangGraph's state machine approach would add unnecessary complexity for a linear flow. If I needed agents dynamically deciding which other agent to call in a loop (like an autonomous research agent), LangGraph would be the right choice. For a structured RAG pipeline, Strands keeps the code simple, readable, and framework-agnostic."</p>
+        </div>
+    </section>
+
+    <!-- Key Features -->
+    <section>
+        <h2><span class="icon">✨</span> Key Features</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h4>🔐 Authentication & RBAC</h4>
+                <p>JWT-based auth with role-based access control. Three roles: employee, hr_admin, admin. Admins can view analytics and manage users.</p>
+            </div>
+            <div class="card">
+                <h4>⚡ Real-time Streaming</h4>
+                <p>WebSocket-based token streaming for instant feedback. Answers appear word-by-word like ChatGPT, with HTTP POST fallback for reliability.</p>
+            </div>
+            <div class="card">
+                <h4>📎 Inline Citations</h4>
+                <p>Every answer includes [Document - Section] citations linking back to the exact policy paragraph. Users can verify any claim.</p>
+            </div>
+            <div class="card">
+                <h4>🛡️ Prompt Injection Guard</h4>
+                <p>Input validation layer detects and blocks prompt injection attempts before they reach the LLM. Protects against adversarial inputs.</p>
+            </div>
+            <div class="card">
+                <h4>📄 PDF Upload</h4>
+                <p>Users can upload their own PDFs and ask questions about them. Documents are chunked, embedded, and searchable alongside HR policies.</p>
+            </div>
+            <div class="card">
+                <h4>👍 Feedback Loop</h4>
+                <p>Thumbs up/down on every response, stored in PostgreSQL. Enables continuous improvement and RLHF-style quality tracking.</p>
+            </div>
+            <div class="card">
+                <h4>🏎️ Rate Limiting</h4>
+                <p>In-memory sliding window rate limiter (20 requests/minute per user). Prevents abuse without external dependencies like Redis.</p>
+            </div>
+            <div class="card">
+                <h4>📊 Observability</h4>
+                <p>Langfuse integration for tracing LLM calls, retrieval quality, and latency. Request IDs on every call for end-to-end debugging.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section>
+        <h2><span class="icon">🛠️</span> Technology Stack</h2>
+        <div class="tech-grid">
+            <div class="tech-item">
+                <div class="tech-name">FastAPI</div>
+                <div class="tech-role">Backend Framework</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-name">React 19</div>
+                <div class="tech-role">Frontend UI</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-name">Strands Agents SDK</div>
+                <div class="tech-role">Agent Orchestration</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-name">ChromaDB</div>
+                <div class="tech-role">Vector Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-name">PostgreSQL</div>
+                <div class="tech-role">Relational Database</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-name">Sentence-Transformers</div>
+                <div class="tech-role">Embeddings (MiniLM)</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-name">BM25 (rank-bm25)</div>
+                <div class="tech-role">Keyword Search</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-name">Tailwind CSS 4</div>
+                <div class="tech-role">Styling</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-name">WebSocket</div>
+                <div class="tech-role">Real-time Streaming</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-name">JWT (PyJWT)</div>
+                <div class="tech-role">Authentication</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-name">Langfuse</div>
+                <div class="tech-role">LLM Observability</div>
+            </div>
+            <div class="tech-item">
+                <div class="tech-name">Docker</div>
+                <div class="tech-role">Containerization</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Data Flow -->
+    <section>
+        <h2><span class="icon">🔄</span> End-to-End Data Flow</h2>
+        <p class="section-desc">Here's exactly what happens when an employee asks "How many casual leaves do I get per year?"</p>
+
+        <div class="highlight-box">
+            <h4>Step-by-Step Flow</h4>
+            <ul>
+                <li><strong>1. Input Validation</strong> — Query is checked for length (1–1000 chars) and scanned for prompt injection patterns</li>
+                <li><strong>2. Router Agent</strong> — LLM classifies the query as HR-related (confidence: 0.95, category: "leave")</li>
+                <li><strong>3. Query Embedding</strong> — Query is encoded into a 384-dimensional vector using all-MiniLM-L6-v2</li>
+                <li><strong>4. Vector Search</strong> — ChromaDB returns top-10 semantically similar chunks (cosine similarity)</li>
+                <li><strong>5. BM25 Search</strong> — Keyword index returns top-10 matching chunks by term frequency</li>
+                <li><strong>6. RRF Fusion</strong> — Both lists are merged, deduplicated, and top-5 chunks are selected</li>
+                <li><strong>7. Answer Generation</strong> — LLM receives chunks + query + conversation history → generates cited answer</li>
+                <li><strong>8. Validation</strong> — Validator checks if every claim in the answer is supported by the chunks</li>
+                <li><strong>9. Streaming</strong> — Answer is streamed token-by-token to the frontend via WebSocket</li>
+                <li><strong>10. Storage</strong> — Exchange is saved to session history for follow-up context resolution</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Why This Project Stands Out -->
+    <section>
+        <h2><span class="icon">🏆</span> Why This Project Stands Out</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h4>🎯 Production-Ready, Not a Demo</h4>
+                <p>Auth, rate limiting, error handling, observability, feedback collection — this isn't a Jupyter notebook. It's a deployable system.</p>
+            </div>
+            <div class="card">
+                <h4>🧠 Advanced RAG Patterns</h4>
+                <p>Hybrid search + RRF fusion + answer validation. Goes beyond basic "embed and retrieve" demos that saturate portfolios.</p>
+            </div>
+            <div class="card">
+                <h4>🤖 Multi-Agent Design</h4>
+                <p>Demonstrates understanding of agent decomposition — each agent has a single responsibility, is independently testable, and can be swapped without affecting others.</p>
+            </div>
+            <div class="card">
+                <h4>📊 Full Stack Ownership</h4>
+                <p>React frontend + Python backend + SQL database + Vector store + LLM integration. Shows end-to-end capability, not just backend or just ML.</p>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<footer>
+    Sage — Built by Sujal Kakkar | Multi-Agent RAG System with AWS Strands SDK
+</footer>
+
+</body>
+</html>

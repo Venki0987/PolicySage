@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sage — Complete Learning Guide</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0a0a0f; color: #d0d0e0; line-height: 1.8; }
+.container { max-width: 900px; margin: 0 auto; padding: 60px 30px; }
+h1 { font-size: 2.8rem; font-weight: 300; background: linear-gradient(135deg, #38bdf8, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 8px; }
+.subtitle { color: #6666a0; font-size: 1rem; margin-bottom: 50px; }
+h2 { font-size: 1.6rem; color: #f0f0f5; margin-top: 60px; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #1e1e2e; }
+h3 { font-size: 1.2rem; color: #38bdf8; margin-top: 30px; margin-bottom: 10px; }
+h4 { font-size: 1rem; color: #8b5cf6; margin-top: 20px; margin-bottom: 8px; }
+p { color: #a0a0c0; margin-bottom: 14px; }
+strong { color: #e0e0f0; }
+code { background: #1a1a2e; color: #67e8f9; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; }
+pre { background: #0d0d14; border: 1px solid #1e1e2e; border-radius: 12px; padding: 20px; overflow-x: auto; margin: 16px 0; font-size: 0.85rem; color: #b0b0c0; line-height: 1.6; }
+ul, ol { margin-left: 20px; margin-bottom: 16px; color: #a0a0c0; }
+li { margin-bottom: 8px; }
+.callout { background: rgba(56,189,248,0.05); border: 1px solid rgba(56,189,248,0.15); border-radius: 12px; padding: 20px; margin: 20px 0; }
+.callout h4 { color: #38bdf8; margin-top: 0; }
+.callout-purple { background: rgba(139,92,246,0.05); border-color: rgba(139,92,246,0.15); }
+.callout-purple h4 { color: #8b5cf6; }
+.callout-green { background: rgba(52,211,153,0.05); border-color: rgba(52,211,153,0.15); }
+.callout-green h4 { color: #34d399; }
+.callout-red { background: rgba(248,113,113,0.05); border-color: rgba(248,113,113,0.15); }
+.callout-red h4 { color: #f87171; }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid #1e1e2e; font-size: 0.9rem; }
+th { color: #38bdf8; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+td { color: #a0a0c0; }
+a { color: #38bdf8; text-decoration: none; }
+a:hover { text-decoration: underline; }
+.toc { background: #111118; border: 1px solid #1e1e2e; border-radius: 12px; padding: 24px; margin-bottom: 40px; }
+.toc h3 { color: #f0f0f5; margin-top: 0; }
+.toc ol { margin-left: 20px; }
+.toc a { color: #8b5cf6; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Sage — Complete Learning Guide</h1>
+<p class="subtitle">Everything you need to understand, explain, modify, and deploy this project. Your personal reference.</p>
+
+<div class="toc">
+<h3>Table of Contents</h3>
+<ol>
+<li><a href="#overview">Project Overview & What You Built</a></li>
+<li><a href="#concepts">Core Concepts You Should Know</a></li>
+<li><a href="#rag">RAG (Retrieval-Augmented Generation) Deep Dive</a></li>
+<li><a href="#agents">Multi-Agent Architecture Explained</a></li>
+<li><a href="#strands">AWS Strands Agents SDK</a></li>
+<li><a href="#hybrid">Hybrid Search: Vector + BM25 + RRF</a></li>
+<li><a href="#backend">Backend Walkthrough (FastAPI)</a></li>
+<li><a href="#frontend">Frontend Walkthrough (React)</a></li>
+<li><a href="#auth">Authentication & Security</a></li>
+<li><a href="#streaming">WebSocket Streaming</a></li>
+<li><a href="#database">Database Design</a></li>
+<li><a href="#interview">Interview Q&A</a></li>
+<li><a href="#improvements">Future Improvements You Can Make</a></li>
+<li><a href="#resources">Learning Resources</a></li>
+</ol>
+</div>
+
+<!-- ===== 1. OVERVIEW ===== -->
+<h2 id="overview">1. Project Overview</h2>
+<p><strong>Sage</strong> is a multi-agent HR Policy Q&A bot. Employees ask questions about company policies (leave, WFH, notice period, reimbursements, code of conduct) and get instant, cited answers powered by AI.</p>
+
+<h3>What makes it impressive</h3>
+<ul>
+<li><strong>Multi-agent pipeline</strong> — Not a single LLM call. 4 specialized agents, each with one job.</li>
+<li><strong>Hybrid search</strong> — Combines vector similarity + keyword matching for better retrieval than either alone.</li>
+<li><strong>Grounding validation</strong> — Checks if the answer is actually supported by the documents (prevents hallucination).</li>
+<li><strong>Production features</strong> — Auth, rate limiting, streaming, feedback, observability, admin panel.</li>
+<li><strong>Full stack</strong> — React frontend + FastAPI backend + PostgreSQL + ChromaDB.</li>
+</ul>
+
+<h3>Tech stack summary</h3>
+<table>
+<tr><td>Agent Framework</td><td>AWS Strands Agents SDK</td></tr>
+<tr><td>LLM</td><td>Claude Sonnet (via OpenAI-compatible proxy)</td></tr>
+<tr><td>Vector DB</td><td>ChromaDB (persistent, cosine similarity)</td></tr>
+<tr><td>Embeddings</td><td>all-MiniLM-L6-v2 (384 dimensions)</td></tr>
+<tr><td>Backend</td><td>FastAPI + Uvicorn (Python)</td></tr>
+<tr><td>Frontend</td><td>React 19 + TypeScript + Tailwind CSS 4</td></tr>
+<tr><td>Database</td><td>PostgreSQL (SQLAlchemy ORM)</td></tr>
+<tr><td>Auth</td><td>JWT (PyJWT + bcrypt)</td></tr>
+<tr><td>Streaming</td><td>WebSocket + HTTP fallback</td></tr>
+</table>
+
+<!-- ===== 2. CONCEPTS ===== -->
+<h2 id="concepts">2. Core Concepts You Should Know</h2>
+
+<h3>LLM (Large Language Model)</h3>
+<p>A neural network trained on massive text data that can generate human-like text. You're using Claude Sonnet — Anthropic's model. You don't train it; you prompt it with instructions and context, and it generates responses.</p>
+
+<h3>Embeddings</h3>
+<p>A way to convert text into a fixed-size numerical vector (array of floats). Similar texts have similar vectors. Your model (all-MiniLM-L6-v2) converts any text into a 384-number array. "How many leaves?" and "What is my leave balance?" would have very similar vectors even though the words are different.</p>
+
+<h3>Vector Database</h3>
+<p>A database optimized for finding similar vectors quickly. ChromaDB stores your document chunks as vectors and finds the most similar ones to a query vector using cosine similarity.</p>
+
+<h3>Cosine Similarity</h3>
+<p>Measures the angle between two vectors. Score of 1.0 = identical direction (very similar text). Score of 0.0 = completely unrelated.</p>
+
+<h3>Chunking</h3>
+<p>Breaking a large document into smaller pieces (chunks) that fit within the LLM's context and can be individually embedded and retrieved. Your chunker splits by markdown ## headers (section-based chunking).</p>
+
+<h3>Prompt Engineering</h3>
+<p>Crafting the text instructions given to the LLM to get the desired output format. Your system prompts tell the LLM to "respond ONLY with JSON" or "include inline citations".</p>
+
+<!-- ===== 3. RAG ===== -->
+<h2 id="rag">3. RAG Deep Dive</h2>
+
+<div class="callout">
+<h4>What is RAG?</h4>
+<p>Retrieval-Augmented Generation. Instead of relying on the LLM's training data (which can be outdated/wrong), you <strong>retrieve</strong> relevant documents first, then <strong>generate</strong> an answer grounded in those documents. This prevents hallucination.</p>
+</div>
+
+<h3>Why RAG instead of fine-tuning?</h3>
+<ul>
+<li><strong>No training required</strong> — Just index your documents, no GPU needed</li>
+<li><strong>Always up-to-date</strong> — Update a document, re-index, done</li>
+<li><strong>Auditable</strong> — You can cite exactly which document section the answer came from</li>
+<li><strong>Cost effective</strong> — Fine-tuning is expensive; RAG uses off-the-shelf models</li>
+</ul>
+
+<h3>RAG Pipeline in Sage</h3>
+<pre>
+1. INGESTION (happens once at startup):
+   Policy .md files → Split by ## headers → Generate embeddings → Store in ChromaDB + BM25 index
+
+2. QUERY TIME (happens per user question):
+   User query → Embed query → Search ChromaDB (top 10) + BM25 (top 10)
+   → Merge via RRF → Top 5 chunks → Feed to LLM with system prompt
+   → LLM generates cited answer from those chunks only
+</pre>
+
+<h3>The key insight</h3>
+<p>The LLM never "remembers" your policies. Every single answer is generated by reading the retrieved chunks right then. The LLM is just a text generator that follows instructions — the retriever is what finds the right information.</p>
+
+<!-- ===== 4. AGENTS ===== -->
+<h2 id="agents">4. Multi-Agent Architecture</h2>
+
+<h3>Why multiple agents instead of one?</h3>
+<ul>
+<li><strong>Single responsibility</strong> — Each agent does one thing well, easier to debug</li>
+<li><strong>Independent testing</strong> — Can unit test each agent separately</li>
+<li><strong>Swappable</strong> — Can replace the retriever without touching the answer agent</li>
+<li><strong>Different capabilities</strong> — Router classifies, Retriever searches, Answer generates</li>
+</ul>
+
+<h3>Agent 1: Router Agent</h3>
+<p><strong>File:</strong> <code>backend/agents/router_agent.py</code></p>
+<p><strong>Job:</strong> Determine if the user's question is about HR policies or something else.</p>
+<p><strong>How:</strong> Sends the query to the LLM with a classification prompt. LLM returns JSON: <code>{"is_hr": true, "confidence": 0.95, "category": "leave"}</code></p>
+<p><strong>Fallback:</strong> If the LLM call fails, defaults to <code>is_hr=True</code> (safe fallback — better to try answering than wrongly reject).</p>
+
+<h3>Agent 2: Retriever Agent</h3>
+<p><strong>File:</strong> <code>backend/agents/retriever_agent.py</code></p>
+<p><strong>Job:</strong> Find the most relevant policy chunks for the query.</p>
+<p><strong>How:</strong> Runs vector search AND BM25 search in parallel, merges results with RRF, returns top 5.</p>
+<p><strong>No LLM involved</strong> — This is pure search, no generation.</p>
+
+<h3>Agent 3: Answer Agent</h3>
+<p><strong>File:</strong> <code>backend/agents/answer_agent.py</code></p>
+<p><strong>Job:</strong> Generate a concise, cited answer from the retrieved chunks.</p>
+<p><strong>How:</strong> Constructs a prompt with: system instructions + retrieved chunks + conversation history + user query → sends to LLM → streams response.</p>
+<p><strong>Key constraint:</strong> Must ONLY use information from the provided chunks (grounding).</p>
+
+<h3>Agent 4: Validator Agent</h3>
+<p><strong>File:</strong> <code>backend/agents/validator_agent.py</code></p>
+<p><strong>Job:</strong> Check if the answer is actually supported by the chunks.</p>
+<p><strong>How:</strong> Compares claims in the answer against the source chunks. If something is made up (hallucinated), flags it and triggers a retry with corrective feedback.</p>
+
+<!-- ===== 5. STRANDS ===== -->
+<h2 id="strands">5. AWS Strands Agents SDK</h2>
+
+<div class="callout-purple callout">
+<h4>What is Strands?</h4>
+<p>An AWS open-source SDK for building AI agents. It provides an <code>Agent(model, system_prompt)</code> abstraction that handles the LLM communication, tool use, and orchestration. You define what the agent should do via prompts, and Strands handles the execution.</p>
+</div>
+
+<h3>Why Strands over LangGraph?</h3>
+<table>
+<tr><th>Criteria</th><th>Strands</th><th>LangGraph</th></tr>
+<tr><td>Best for</td><td>Sequential pipelines</td><td>Cyclical/looping workflows</td></tr>
+<tr><td>Complexity</td><td>Minimal — Agent(model, prompt)</td><td>Heavy — StateGraph, nodes, edges</td></tr>
+<tr><td>Orchestration</td><td>Plain Python async/await</td><td>Graph state machine</td></tr>
+<tr><td>Your use case</td><td>✅ Sequential: classify→retrieve→answer→validate</td><td>Overkill for linear flow</td></tr>
+</table>
+
+<h3>How Strands is used in your code</h3>
+<pre>
+# Router Agent creates a Strands-managed client
+from strands import Agent
+from strands.models.openai import OpenAIModel
+
+# The agent framework manages the LLM connection
+# Your proxy (Claude Sonnet) is accessed via OpenAI-compatible protocol
+client, model_id = self._create_strands_client()
+response = client.chat.completions.create(model=model_id, messages=[...])
+</pre>
+
+<div class="callout-red callout">
+<h4>Honest note about the implementation</h4>
+<p>Strands is installed and imported, but the actual LLM calls go through the OpenAI SDK directly because the Strands <code>OpenAIModel</code> adapter returns empty responses with your specific proxy. The architecture follows Strands patterns, and if you ever switch to a direct Bedrock/Anthropic endpoint, the Strands Agent class would handle everything end-to-end.</p>
+</div>
+
+<!-- ===== 6. HYBRID SEARCH ===== -->
+<h2 id="hybrid">6. Hybrid Search Explained</h2>
+
+<h3>Problem with vector search alone</h3>
+<p>Vector search is great at finding semantically similar text, but it can miss exact keyword matches. If someone asks "Band B notice period", the exact term "Band B" matters — a purely semantic search might return chunks about notice periods generally without specifically mentioning Band B.</p>
+
+<h3>Problem with keyword search alone</h3>
+<p>BM25 is great at exact matching but misses semantic equivalence. "WFH policy" won't match a chunk titled "Work From Home Guidelines" because the keywords are different.</p>
+
+<h3>Solution: Combine both + RRF</h3>
+<pre>
+Vector Search (ChromaDB):
+  Query → Embed → Find top-10 similar vectors → Ranked by cosine similarity
+
+BM25 Keyword Search:
+  Query → Tokenize → Find top-10 by TF-IDF score → Ranked by term frequency
+
+Reciprocal Rank Fusion (RRF):
+  For each chunk appearing in either list:
+    score = Σ (1 / (k + rank_in_list))
+  
+  where k = 60 (constant), rank starts at 1
+  
+  Example: A chunk ranked #1 in vector and #3 in BM25:
+    score = 1/(60+1) + 1/(60+3) = 0.0164 + 0.0159 = 0.0323
+  
+  Sort by fused score → Take top 5 → Done
+</pre>
+
+<h3>Why RRF works</h3>
+<p>It doesn't care about the absolute scores from each system (which are on different scales). It only uses <strong>ranks</strong>. A chunk that appears high in BOTH lists gets boosted. A chunk that's #1 in one list but absent from the other still gets included but with a lower fused score.</p>
+
+<!-- ===== 7. BACKEND ===== -->
+<h2 id="backend">7. Backend Walkthrough</h2>
+
+<h3>Entry point: main.py</h3>
+<p>Creates the FastAPI app, adds middleware (CORS, error handling, rate limiting), registers routes, and runs the ingestion pipeline at startup.</p>
+
+<h3>Request flow for POST /api/chat</h3>
+<pre>
+1. Request hits FastAPI route (api/routes.py)
+2. Validate session_id exists (create if new)
+3. Validate query length (1-1000 chars)
+4. Router Agent classifies → HR or non-HR
+5. If non-HR → return friendly rejection
+6. Retriever Agent → hybrid search → top 5 chunks
+7. Answer Agent → generate cited answer from chunks + history
+8. Validator Agent → check groundedness
+9. Store exchange in session history
+10. Return JSON response
+</pre>
+
+<h3>Request flow for WebSocket /api/chat/stream</h3>
+<pre>
+1. Client connects with JWT token as query param
+2. Server accepts connection
+3. Client sends JSON: {query, session_id, source}
+4. Validate input + injection guard
+5. Skip LLM router (hardcoded is_hr=True for speed)
+6. Retriever → chunks
+7. Answer Agent → generate tokens
+8. Stream each token as: {"type": "token", "content": "word "}
+9. Send completion: {"type": "completion", "citations": [...]}
+10. Store in history
+</pre>
+
+<h3>Key files to understand</h3>
+<table>
+<tr><td><code>main.py</code></td><td>App creation, middleware stack, startup ingestion</td></tr>
+<tr><td><code>api/routes.py</code></td><td>Main chat endpoints (HTTP + WebSocket)</td></tr>
+<tr><td><code>ingestion/pipeline.py</code></td><td>Document → chunks → embeddings → ChromaDB</td></tr>
+<tr><td><code>ingestion/chunker.py</code></td><td>Markdown splitting by ## headers</td></tr>
+<tr><td><code>services/session_store.py</code></td><td>Conversation history (last 5 messages)</td></tr>
+<tr><td><code>middleware.py</code></td><td>Error sanitization (no stack traces leaked)</td></tr>
+<tr><td><code>rate_limiter.py</code></td><td>20 req/min sliding window per user</td></tr>
+</table>
+
+<!-- ===== 8. FRONTEND ===== -->
+<h2 id="frontend">8. Frontend Walkthrough</h2>
+
+<h3>Key hooks (custom React hooks)</h3>
+<table>
+<tr><td><code>useAuth.ts</code></td><td>Login/logout, JWT token management, localStorage persistence</td></tr>
+<tr><td><code>useChat.ts</code></td><td>Message state, typing indicator, timeout handling (60s)</td></tr>
+<tr><td><code>useWebSocket.ts</code></td><td>WebSocket connection, reconnection with backoff, message parsing</td></tr>
+<tr><td><code>useSession.ts</code></td><td>Session ID generation and persistence</td></tr>
+</table>
+
+<h3>How streaming works in the UI</h3>
+<pre>
+1. User clicks send → handleSend() in App.tsx
+2. If WebSocket connected → send via WS
+3. If not → HTTP fallback (POST /api/chat)
+4. For WS: tokens arrive one by one → handleToken() appends to message
+5. On completion → handleCompletion() adds citations + metadata
+6. On timeout (60s) → shows "Service not responding"
+</pre>
+
+<h3>Component structure</h3>
+<pre>
+App.tsx (main layout + routing)
+├── LoginPage.tsx (auth gate)
+├── Sidebar.tsx (chat history + suggested questions)
+├── ChatArea.tsx (message list)
+│   └── MessageBubble.tsx (individual message + citations)
+├── ChatInput.tsx (text input + source toggle)
+├── TypingIndicator.tsx (three dots animation)
+├── FeedbackButtons.tsx (thumbs up/down)
+├── AdminPanel.tsx (admin-only dashboard)
+└── ThemeToggle.tsx (dark/light mode)
+</pre>
+
+<!-- ===== 9. AUTH ===== -->
+<h2 id="auth">9. Authentication & Security</h2>
+
+<h3>JWT Flow</h3>
+<pre>
+1. User submits email + password → POST /api/auth/login
+2. Server verifies password (bcrypt) → generates JWT (HS256, 24h expiry)
+3. Frontend stores token in localStorage
+4. Every API call includes: Authorization: Bearer {token}
+5. WebSocket passes token as: ?token={token} query param
+6. Token contains: {sub: user_id, email, role, exp}
+</pre>
+
+<h3>Roles</h3>
+<ul>
+<li><strong>employee</strong> — Can chat, upload PDFs, give feedback</li>
+<li><strong>hr_admin</strong> — Employee + view analytics</li>
+<li><strong>admin</strong> — Full access, user management</li>
+</ul>
+
+<h3>Security layers</h3>
+<ul>
+<li><strong>Input validation</strong> — 1-1000 char limit, Pydantic schemas</li>
+<li><strong>Prompt injection guard</strong> — Pattern matching for "ignore previous", "system:", etc.</li>
+<li><strong>Rate limiting</strong> — 20 requests/minute per user (sliding window)</li>
+<li><strong>Error sanitization</strong> — No file paths, stack traces, or internal names in responses</li>
+<li><strong>CORS</strong> — Only allows configured origins</li>
+</ul>
+
+<!-- ===== 10. STREAMING ===== -->
+<h2 id="streaming">10. WebSocket Streaming</h2>
+
+<h3>Why WebSocket instead of just HTTP?</h3>
+<p>HTTP returns the entire response at once. The user waits 5-20 seconds seeing nothing. WebSocket lets you stream each word as it's generated — the user sees the answer building in real-time like ChatGPT.</p>
+
+<h3>Protocol</h3>
+<pre>
+Client → Server: {"query": "...", "session_id": "...", "source": "policies"}
+Server → Client: {"type": "token", "content": "NovaTech's "}
+Server → Client: {"type": "token", "content": "leave "}
+Server → Client: {"type": "token", "content": "policy "}
+...
+Server → Client: {"type": "completion", "citations": [...], "message_id": "...", "confidence_score": 0.8}
+</pre>
+
+<h3>HTTP Fallback</h3>
+<p>If WebSocket fails to connect (CORS, expired token, network issue), the frontend automatically falls back to POST /api/chat which returns the full answer in one response.</p>
+
+<!-- ===== 11. DATABASE ===== -->
+<h2 id="database">11. Database Design</h2>
+
+<h3>PostgreSQL Tables (SQLAlchemy ORM)</h3>
+<pre>
+User
+├── user_id (UUID, PK)
+├── email (unique)
+├── name
+├── hashed_password (bcrypt)
+├── role (employee/hr_admin/admin)
+└── is_active
+
+SessionModel
+├── session_id (UUID, PK)
+├── user_id (FK → User)
+└── created_at
+
+ChatMessage
+├── id (auto-increment)
+├── session_id (FK → Session)
+├── message_id (UUID)
+├── role (user/assistant)
+├── content (text)
+└── timestamp
+
+Feedback
+├── id (auto-increment)
+├── session_id
+├── message_id
+├── rating (thumbs_up/thumbs_down)
+└── created_at
+</pre>
+
+<!-- ===== 12. INTERVIEW ===== -->
+<h2 id="interview">12. Interview Q&A</h2>
+
+<div class="callout-green callout">
+<h4>"Tell me about this project"</h4>
+<p>"Sage is an HR policy Q&A bot I built during my internship. It uses a multi-agent RAG architecture — a Router Agent classifies queries, a Retriever Agent does hybrid search combining vector similarity and BM25 keyword matching with RRF fusion, an Answer Agent generates cited responses, and a Validator Agent checks for hallucination. Built with AWS Strands Agents SDK, FastAPI, React, ChromaDB, and PostgreSQL. It supports real-time WebSocket streaming, JWT auth, rate limiting, and PDF upload."</p>
+</div>
+
+<div class="callout-green callout">
+<h4>"Why Strands instead of LangGraph?"</h4>
+<p>"My pipeline is sequential — classify, retrieve, generate, validate. No cycles or dynamic branching. Strands gives a clean Agent abstraction that I orchestrate with plain Python async/await. LangGraph's state machine approach would add unnecessary boilerplate for a linear flow. If I needed agents that dynamically loop and call each other, LangGraph would be the right choice."</p>
+</div>
+
+<div class="callout-green callout">
+<h4>"What is RAG and why use it?"</h4>
+<p>"RAG means retrieving relevant documents before generating an answer. Instead of relying on the LLM's training data, I feed it actual company policy text as context. This prevents hallucination, keeps answers up-to-date (just re-index when policies change), and makes answers auditable with citations."</p>
+</div>
+
+<div class="callout-green callout">
+<h4>"How does hybrid search work?"</h4>
+<p>"I combine two retrieval methods: vector search finds semantically similar chunks even if wording differs, and BM25 finds exact keyword matches that vector search might miss. I merge both results using Reciprocal Rank Fusion — a chunk that ranks high in both lists gets boosted. This gives better recall than either method alone."</p>
+</div>
+
+<div class="callout-green callout">
+<h4>"How do you handle hallucination?"</h4>
+<p>"Two ways: First, the system prompt strictly tells the LLM to only use provided chunks and say 'I don't know' if the answer isn't in the context. Second, a Validator Agent checks the generated answer against the source chunks — if it finds unsupported claims, it triggers a retry with corrective feedback."</p>
+</div>
+
+<div class="callout-green callout">
+<h4>"What's the biggest challenge you faced?"</h4>
+<p>"The WebSocket connection was silently failing in the browser. The backend worked perfectly when tested from Python. It turned out a zombie uvicorn process was holding port 8000 and serving stale code. I also had to bypass BaseHTTPMiddleware for WebSocket connections because FastAPI's middleware stack breaks WebSocket upgrades. This taught me about ASGI scope types and how middlewares interact differently with HTTP vs WebSocket."</p>
+</div>
+
+<div class="callout-green callout">
+<h4>"What would you improve?"</h4>
+<p>"I'd add proper chunking strategies (semantic chunking instead of just header-based), implement re-ranking with a cross-encoder model for better precision, add streaming support natively through Strands when they fix their OpenAI adapter, and deploy with proper CI/CD. I'd also add evaluation metrics using RAGAS to measure retrieval quality and answer faithfulness."</p>
+</div>
+
+<!-- ===== 13. IMPROVEMENTS ===== -->
+<h2 id="improvements">13. Future Improvements</h2>
+
+<h3>Easy wins</h3>
+<ul>
+<li>Add a cross-encoder re-ranker (e.g., ms-marco-MiniLM) after RRF for better top-5 precision</li>
+<li>Implement semantic chunking (split by meaning, not just headers)</li>
+<li>Add caching — same question within 5 minutes returns cached answer</li>
+<li>Implement proper Strands Agent tool use (define tools for search, DB lookup)</li>
+</ul>
+
+<h3>Medium effort</h3>
+<ul>
+<li>Add RAGAS evaluation (faithfulness, answer relevance, context precision scores)</li>
+<li>Implement conversation summarization for very long sessions</li>
+<li>Add multi-language support</li>
+<li>Implement A/B testing different prompts and measure quality</li>
+</ul>
+
+<h3>Advanced</h3>
+<ul>
+<li>Replace ChromaDB with Pinecone/Weaviate for production scale</li>
+<li>Add knowledge graph on top of vector search for relationship queries</li>
+<li>Implement RLHF from the feedback data (use thumbs up/down to fine-tune)</li>
+<li>Deploy on AWS with proper infra (ECS + RDS + ElastiCache + CloudFront)</li>
+</ul>
+
+<!-- ===== 14. RESOURCES ===== -->
+<h2 id="resources">14. Learning Resources</h2>
+
+<h3>RAG</h3>
+<ul>
+<li><a href="https://docs.llamaindex.ai/en/stable/">LlamaIndex docs</a> — Great RAG framework docs</li>
+<li><a href="https://www.pinecone.io/learn/retrieval-augmented-generation/">Pinecone RAG Guide</a></li>
+<li>Paper: "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" (Lewis et al., 2020)</li>
+</ul>
+
+<h3>Embeddings & Vector Search</h3>
+<ul>
+<li><a href="https://www.sbert.net/">Sentence-Transformers docs</a></li>
+<li><a href="https://docs.trychroma.com/">ChromaDB docs</a></li>
+<li><a href="https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2">all-MiniLM-L6-v2 model card</a></li>
+</ul>
+
+<h3>Strands SDK</h3>
+<ul>
+<li><a href="https://github.com/strands-agents/sdk-python">Strands Agents SDK GitHub</a></li>
+<li><a href="https://strandsagents.com/">Strands Documentation</a></li>
+</ul>
+
+<h3>FastAPI</h3>
+<ul>
+<li><a href="https://fastapi.tiangolo.com/">FastAPI official docs</a></li>
+<li><a href="https://fastapi.tiangolo.com/advanced/websockets/">FastAPI WebSocket guide</a></li>
+</ul>
+
+<h3>React</h3>
+<ul>
+<li><a href="https://react.dev/">React 19 docs</a></li>
+<li><a href="https://tailwindcss.com/docs">Tailwind CSS docs</a></li>
+</ul>
+
+<h3>Related papers</h3>
+<ul>
+<li>"Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods" (Cormack et al., 2009)</li>
+<li>"Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection" (Asai et al., 2023)</li>
+</ul>
+
+<div class="callout" style="margin-top:60px;">
+<h4>Good luck, Sujal! 🚀</h4>
+<p>You built something real. You understand RAG, multi-agent systems, hybrid search, and full-stack deployment. That's a solid foundation. Keep building.</p>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" font-family="Segoe UI, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0f"/>
+      <stop offset="100%" style="stop-color:#111118"/>
+    </linearGradient>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#38bdf8"/>
+      <stop offset="100%" style="stop-color:#8b5cf6"/>
+    </linearGradient>
+    <linearGradient id="agentGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1e3a"/>
+      <stop offset="100%" style="stop-color:#16162a"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="800" fill="url(#bgGrad)"/>
+
+  <!-- Title -->
+  <text x="600" y="45" text-anchor="middle" fill="url(#headerGrad)" font-size="24" font-weight="700">Sage — Multi-Agent RAG Architecture</text>
+  <text x="600" y="68" text-anchor="middle" fill="#6666a0" font-size="12">AWS Strands Agents SDK • Hybrid Search • Real-time Streaming</text>
+
+  <!-- ==================== FRONTEND LAYER ==================== -->
+  <rect x="40" y="90" width="1120" height="100" rx="12" fill="#111118" stroke="#1e1e2e" stroke-width="1.5"/>
+  <text x="60" y="112" fill="#38bdf8" font-size="11" font-weight="600" letter-spacing="1.5">FRONTEND</text>
+
+  <rect x="70" y="125" width="140" height="50" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="140" y="147" text-anchor="middle" fill="#e0e0f0" font-size="11" font-weight="600">React 19 + TS</text>
+  <text x="140" y="163" text-anchor="middle" fill="#6666a0" font-size="9">Tailwind CSS 4</text>
+
+  <rect x="230" y="125" width="140" height="50" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="300" y="147" text-anchor="middle" fill="#e0e0f0" font-size="11" font-weight="600">WebSocket Client</text>
+  <text x="300" y="163" text-anchor="middle" fill="#6666a0" font-size="9">Token streaming</text>
+
+  <rect x="390" y="125" width="140" height="50" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="460" y="147" text-anchor="middle" fill="#e0e0f0" font-size="11" font-weight="600">HTTP Fallback</text>
+  <text x="460" y="163" text-anchor="middle" fill="#6666a0" font-size="9">POST /api/chat</text>
+
+  <rect x="550" y="125" width="140" height="50" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="620" y="147" text-anchor="middle" fill="#e0e0f0" font-size="11" font-weight="600">JWT Auth</text>
+  <text x="620" y="163" text-anchor="middle" fill="#6666a0" font-size="9">Login / Register</text>
+
+  <rect x="710" y="125" width="140" height="50" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="780" y="147" text-anchor="middle" fill="#e0e0f0" font-size="11" font-weight="600">Admin Panel</text>
+  <text x="780" y="163" text-anchor="middle" fill="#6666a0" font-size="9">Analytics / Users</text>
+
+  <rect x="870" y="125" width="140" height="50" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="940" y="147" text-anchor="middle" fill="#e0e0f0" font-size="11" font-weight="600">PDF Upload</text>
+  <text x="940" y="163" text-anchor="middle" fill="#6666a0" font-size="9">Document Q&amp;A</text>
+
+  <!-- Arrow: Frontend → API -->
+  <path d="M 600 190 L 600 215" stroke="#38bdf8" stroke-width="2" fill="none" marker-end="url(#arrowBlue)"/>
+  <defs><marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#38bdf8"/></marker></defs>
+
+  <!-- ==================== API LAYER ==================== -->
+  <rect x="40" y="220" width="1120" height="90" rx="12" fill="#111118" stroke="#1e1e2e" stroke-width="1.5"/>
+  <text x="60" y="242" fill="#38bdf8" font-size="11" font-weight="600" letter-spacing="1.5">API LAYER — FastAPI + Uvicorn</text>
+
+  <rect x="70" y="255" width="160" height="42" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="150" y="280" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">WS /api/chat/stream</text>
+
+  <rect x="250" y="255" width="160" height="42" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="330" y="280" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">POST /api/chat</text>
+
+  <rect x="430" y="255" width="130" height="42" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="495" y="280" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Rate Limiter</text>
+
+  <rect x="580" y="255" width="130" height="42" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="645" y="280" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">CORS Middleware</text>
+
+  <rect x="730" y="255" width="150" height="42" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="805" y="280" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Error Middleware</text>
+
+  <rect x="900" y="255" width="150" height="42" rx="8" fill="url(#agentGrad)" stroke="#2a2a4a"/>
+  <text x="975" y="280" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Auth Routes</text>
+
+  <!-- Arrow: API → Agents -->
+  <path d="M 600 310 L 600 340" stroke="#8b5cf6" stroke-width="2" fill="none" marker-end="url(#arrowPurple)"/>
+  <defs><marker id="arrowPurple" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#8b5cf6"/></marker></defs>
+
+  <!-- ==================== AGENT PIPELINE ==================== -->
+  <rect x="40" y="345" width="1120" height="140" rx="12" fill="#0d0d14" stroke="#2a2a4a" stroke-width="1.5"/>
+  <text x="60" y="367" fill="#8b5cf6" font-size="11" font-weight="600" letter-spacing="1.5">AGENT ORCHESTRATION — AWS Strands Agents SDK</text>
+
+  <!-- Agent 1: Input Validator -->
+  <rect x="70" y="385" width="150" height="80" rx="10" fill="url(#agentGrad)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="145" y="410" text-anchor="middle" fill="#34d399" font-size="18">🛡️</text>
+  <text x="145" y="430" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Input Validator</text>
+  <text x="145" y="445" text-anchor="middle" fill="#6666a0" font-size="9">Length + Injection</text>
+  <text x="145" y="458" text-anchor="middle" fill="#6666a0" font-size="9">Guard</text>
+
+  <!-- Arrow -->
+  <path d="M 220 425 L 250 425" stroke="#38bdf8" stroke-width="1.5" fill="none" marker-end="url(#arrowBlue)"/>
+
+  <!-- Agent 2: Router Agent -->
+  <rect x="255" y="385" width="150" height="80" rx="10" fill="url(#agentGrad)" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="330" y="410" text-anchor="middle" fill="#f59e0b" font-size="18">🔀</text>
+  <text x="330" y="430" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Router Agent</text>
+  <text x="330" y="445" text-anchor="middle" fill="#6666a0" font-size="9">HR vs Non-HR</text>
+  <text x="330" y="458" text-anchor="middle" fill="#6666a0" font-size="9">Classification (LLM)</text>
+
+  <!-- Arrow -->
+  <path d="M 405 425 L 435 425" stroke="#38bdf8" stroke-width="1.5" fill="none" marker-end="url(#arrowBlue)"/>
+
+  <!-- Agent 3: Retriever Agent -->
+  <rect x="440" y="385" width="170" height="80" rx="10" fill="url(#agentGrad)" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="525" y="410" text-anchor="middle" fill="#38bdf8" font-size="18">🔍</text>
+  <text x="525" y="430" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Retriever Agent</text>
+  <text x="525" y="445" text-anchor="middle" fill="#6666a0" font-size="9">Vector + BM25</text>
+  <text x="525" y="458" text-anchor="middle" fill="#6666a0" font-size="9">+ RRF Fusion (Top 5)</text>
+
+  <!-- Arrow -->
+  <path d="M 610 425 L 640 425" stroke="#38bdf8" stroke-width="1.5" fill="none" marker-end="url(#arrowBlue)"/>
+
+  <!-- Agent 4: Answer Agent -->
+  <rect x="645" y="385" width="160" height="80" rx="10" fill="url(#agentGrad)" stroke="#ec4899" stroke-width="1.5"/>
+  <text x="725" y="410" text-anchor="middle" fill="#ec4899" font-size="18">✍️</text>
+  <text x="725" y="430" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Answer Agent</text>
+  <text x="725" y="445" text-anchor="middle" fill="#6666a0" font-size="9">Cited Generation</text>
+  <text x="725" y="458" text-anchor="middle" fill="#6666a0" font-size="9">+ History Context</text>
+
+  <!-- Arrow -->
+  <path d="M 805 425 L 835 425" stroke="#38bdf8" stroke-width="1.5" fill="none" marker-end="url(#arrowBlue)"/>
+
+  <!-- Agent 5: Validator Agent -->
+  <rect x="840" y="385" width="160" height="80" rx="10" fill="url(#agentGrad)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="920" y="410" text-anchor="middle" fill="#34d399" font-size="18">✅</text>
+  <text x="920" y="430" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Validator Agent</text>
+  <text x="920" y="445" text-anchor="middle" fill="#6666a0" font-size="9">Groundedness Check</text>
+  <text x="920" y="458" text-anchor="middle" fill="#6666a0" font-size="9">+ Retry on Fail</text>
+
+  <!-- Retry arrow from Validator back to Answer -->
+  <path d="M 920 465 Q 920 490 725 490 Q 725 480 725 465" stroke="#f87171" stroke-width="1" fill="none" stroke-dasharray="4,3" marker-end="url(#arrowRed)"/>
+  <text x="822" y="500" text-anchor="middle" fill="#f87171" font-size="8">retry if hallucinated</text>
+  <defs><marker id="arrowRed" markerWidth="6" markerHeight="6" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="#f87171"/></marker></defs>
+
+  <!-- Arrow: Agents → Data Layer -->
+  <path d="M 600 485 L 600 520" stroke="#8b5cf6" stroke-width="2" fill="none" marker-end="url(#arrowPurple)"/>
+
+  <!-- ==================== DATA / RETRIEVAL LAYER ==================== -->
+  <rect x="40" y="525" width="1120" height="110" rx="12" fill="#111118" stroke="#1e1e2e" stroke-width="1.5"/>
+  <text x="60" y="547" fill="#34d399" font-size="11" font-weight="600" letter-spacing="1.5">RETRIEVAL &amp; DATA LAYER</text>
+
+  <rect x="70" y="560" width="180" height="60" rx="8" fill="url(#agentGrad)" stroke="#38bdf8"/>
+  <text x="160" y="583" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">ChromaDB</text>
+  <text x="160" y="598" text-anchor="middle" fill="#6666a0" font-size="9">Vector Store (Cosine)</text>
+  <text x="160" y="611" text-anchor="middle" fill="#6666a0" font-size="9">384-dim embeddings</text>
+
+  <rect x="270" y="560" width="180" height="60" rx="8" fill="url(#agentGrad)" stroke="#f59e0b"/>
+  <text x="360" y="583" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">BM25 Index</text>
+  <text x="360" y="598" text-anchor="middle" fill="#6666a0" font-size="9">Keyword Search</text>
+  <text x="360" y="611" text-anchor="middle" fill="#6666a0" font-size="9">TF-IDF ranking</text>
+
+  <rect x="470" y="560" width="180" height="60" rx="8" fill="url(#agentGrad)" stroke="#8b5cf6"/>
+  <text x="560" y="583" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Sentence-Transformers</text>
+  <text x="560" y="598" text-anchor="middle" fill="#6666a0" font-size="9">all-MiniLM-L6-v2</text>
+  <text x="560" y="611" text-anchor="middle" fill="#6666a0" font-size="9">Query &amp; Doc Embeddings</text>
+
+  <rect x="670" y="560" width="160" height="60" rx="8" fill="url(#agentGrad)" stroke="#ec4899"/>
+  <text x="750" y="583" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">PostgreSQL</text>
+  <text x="750" y="598" text-anchor="middle" fill="#6666a0" font-size="9">Users, Sessions</text>
+  <text x="750" y="611" text-anchor="middle" fill="#6666a0" font-size="9">Feedback, History</text>
+
+  <rect x="850" y="560" width="160" height="60" rx="8" fill="url(#agentGrad)" stroke="#34d399"/>
+  <text x="930" y="583" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Policy Documents</text>
+  <text x="930" y="598" text-anchor="middle" fill="#6666a0" font-size="9">5 Markdown Files</text>
+  <text x="930" y="611" text-anchor="middle" fill="#6666a0" font-size="9">38 Chunks Indexed</text>
+
+  <!-- ==================== LLM LAYER ==================== -->
+  <rect x="40" y="655" width="1120" height="80" rx="12" fill="#0d0d14" stroke="#2a2a4a" stroke-width="1.5"/>
+  <text x="60" y="677" fill="#ec4899" font-size="11" font-weight="600" letter-spacing="1.5">LLM PROVIDER</text>
+
+  <rect x="70" y="690" width="250" height="35" rx="8" fill="url(#agentGrad)" stroke="#ec4899"/>
+  <text x="195" y="712" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">OpenAI-Compatible Proxy (Claude Sonnet)</text>
+
+  <rect x="340" y="690" width="200" height="35" rx="8" fill="url(#agentGrad)" stroke="#8b5cf6"/>
+  <text x="440" y="712" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Strands OpenAIModel Adapter</text>
+
+  <rect x="560" y="690" width="180" height="35" rx="8" fill="url(#agentGrad)" stroke="#f59e0b"/>
+  <text x="650" y="712" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Langfuse Observability</text>
+
+  <rect x="760" y="690" width="180" height="35" rx="8" fill="url(#agentGrad)" stroke="#38bdf8"/>
+  <text x="850" y="712" text-anchor="middle" fill="#e0e0f0" font-size="10" font-weight="600">Request Tracing (X-Request-ID)</text>
+
+  <!-- Arrow: Data → LLM -->
+  <path d="M 600 635 L 600 655" stroke="#ec4899" stroke-width="2" fill="none" marker-end="url(#arrowPink)"/>
+  <defs><marker id="arrowPink" markerWidth="8" markerHeight="8" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#ec4899"/></marker></defs>
+
+  <!-- Footer -->
+  <text x="600" y="770" text-anchor="middle" fill="#4a4a6a" font-size="10">Built by Sujal Kakkar • React + FastAPI + Strands SDK + ChromaDB + PostgreSQL</text>
+</svg>
