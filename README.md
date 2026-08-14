@@ -121,9 +121,6 @@ JWT_SECRET_KEY=your-secret-key
 
 The agent pipeline is **sequential** (classify → retrieve → generate → validate) with no cycles or dynamic branching. Strands provides a clean `Agent(model, prompt)` abstraction orchestrated with plain Python async/await — no graph boilerplate needed.
 
-## License
-
-MIT
 
 ## Author
 
