@@ -1,18 +1,18 @@
-﻿# PolicySage â€” HR Policy Q&A Bot
+# PolicySage — HR Policy Q&A Bot
 
 A production-grade multi-agent RAG (Retrieval-Augmented Generation) system that gives employees instant, cited answers to HR policy questions. Built with **AWS Strands Agents SDK**, hybrid search, and real-time streaming.
 
 ## Architecture
 
 ```
-User Query â†’ Input Validator â†’ Router Agent â†’ Retriever Agent â†’ Answer Agent â†’ Validator Agent â†’ Response
+User Query → Input Validator → Router Agent → Retriever Agent → Answer Agent → Validator Agent → Response
 ```
 
 **Agents:**
-- **Router Agent** â€” Classifies queries as HR or non-HR using Strands SDK + LLM
-- **Retriever Agent** â€” Hybrid search (ChromaDB vector + BM25 keyword + RRF fusion)
-- **Answer Agent** â€” Generates concise, cited answers grounded in policy chunks
-- **Validator Agent** â€” Checks answer groundedness, retries if hallucination detected
+- **Router Agent** — Classifies queries as HR or non-HR using Strands SDK + LLM
+- **Retriever Agent** — Hybrid search (ChromaDB vector + BM25 keyword + RRF fusion)
+- **Answer Agent** — Generates concise, cited answers grounded in policy chunks
+- **Validator Agent** — Checks answer groundedness, retries if hallucination detected
 
 ## Tech Stack
 
@@ -31,16 +31,16 @@ User Query â†’ Input Validator â†’ Router Agent â†’ Retriever Age
 
 ## Features
 
-- **Hybrid Search** â€” Vector similarity + BM25 keyword + Reciprocal Rank Fusion
-- **Real-time Streaming** â€” Token-by-token WebSocket responses
-- **Inline Citations** â€” Every answer cites [document - section]
-- **JWT Authentication** â€” Role-based access (employee, hr_admin, admin)
-- **Prompt Injection Guard** â€” Blocks adversarial inputs
-- **PDF Upload** â€” Ask questions about uploaded documents
-- **Feedback Collection** â€” Thumbs up/down stored in PostgreSQL
-- **Rate Limiting** â€” 20 req/min per user (sliding window)
-- **Admin Panel** â€” Analytics and user management
-- **Session History** â€” Multi-turn conversation context
+- **Hybrid Search** — Vector similarity + BM25 keyword + Reciprocal Rank Fusion
+- **Real-time Streaming** — Token-by-token WebSocket responses
+- **Inline Citations** — Every answer cites [document - section]
+- **JWT Authentication** — Role-based access (employee, hr_admin, admin)
+- **Prompt Injection Guard** — Blocks adversarial inputs
+- **PDF Upload** — Ask questions about uploaded documents
+- **Feedback Collection** — Thumbs up/down stored in PostgreSQL
+- **Rate Limiting** — 20 req/min per user (sliding window)
+- **Admin Panel** — Analytics and user management
+- **Session History** — Multi-turn conversation context
 
 ## Quick Start
 
@@ -87,39 +87,39 @@ JWT_SECRET_KEY=your-secret-key
 ## Project Structure
 
 ```
-â”œâ”€â”€ backend/
-â”‚   â”œâ”€â”€ agents/          # Router, Retriever, Answer, Validator agents
-â”‚   â”œâ”€â”€ api/             # FastAPI routes (chat, auth, admin, PDF)
-â”‚   â”œâ”€â”€ auth/            # JWT handler, password hashing, dependencies
-â”‚   â”œâ”€â”€ ingestion/       # Document chunking, embedding, BM25 indexing
-â”‚   â”œâ”€â”€ models/          # Pydantic schemas, SQLAlchemy ORM models
-â”‚   â”œâ”€â”€ services/        # Session store, PDF store, injection guard
-â”‚   â”œâ”€â”€ main.py          # FastAPI app entry point
-â”‚   â””â”€â”€ requirements.txt
-â”œâ”€â”€ frontend/
-â”‚   â”œâ”€â”€ src/
-â”‚   â”‚   â”œâ”€â”€ components/  # Chat, Login, Admin, Sidebar, etc.
-â”‚   â”‚   â”œâ”€â”€ hooks/       # useAuth, useChat, useWebSocket, useSession
-â”‚   â”‚   â””â”€â”€ types/       # TypeScript interfaces
-â”‚   â””â”€â”€ package.json
-â”œâ”€â”€ data/
-â”‚   â””â”€â”€ policies/        # HR policy markdown documents
-â””â”€â”€ chroma_data/         # Persistent vector store
+├── backend/
+│   ├── agents/          # Router, Retriever, Answer, Validator agents
+│   ├── api/             # FastAPI routes (chat, auth, admin, PDF)
+│   ├── auth/            # JWT handler, password hashing, dependencies
+│   ├── ingestion/       # Document chunking, embedding, BM25 indexing
+│   ├── models/          # Pydantic schemas, SQLAlchemy ORM models
+│   ├── services/        # Session store, PDF store, injection guard
+│   ├── main.py          # FastAPI app entry point
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── components/  # Chat, Login, Admin, Sidebar, etc.
+│   │   ├── hooks/       # useAuth, useChat, useWebSocket, useSession
+│   │   └── types/       # TypeScript interfaces
+│   └── package.json
+├── data/
+│   └── policies/        # HR policy markdown documents
+└── chroma_data/         # Persistent vector store
 ```
 
 ## How It Works
 
-1. **Ingestion** â€” Policy markdown files are chunked by section, embedded with sentence-transformers, and stored in ChromaDB + BM25 index
-2. **Query** â€” User asks a question via WebSocket or HTTP
-3. **Classification** â€” Router Agent determines if query is HR-related
-4. **Retrieval** â€” Hybrid search finds top-5 relevant policy chunks
-5. **Generation** â€” Answer Agent produces a cited answer from chunks + history
-6. **Validation** â€” Validator Agent checks groundedness, retries if needed
-7. **Streaming** â€” Response streams token-by-token to the frontend
+1. **Ingestion** — Policy markdown files are chunked by section, embedded with sentence-transformers, and stored in ChromaDB + BM25 index
+2. **Query** — User asks a question via WebSocket or HTTP
+3. **Classification** — Router Agent determines if query is HR-related
+4. **Retrieval** — Hybrid search finds top-5 relevant policy chunks
+5. **Generation** — Answer Agent produces a cited answer from chunks + history
+6. **Validation** — Validator Agent checks groundedness, retries if needed
+7. **Streaming** — Response streams token-by-token to the frontend
 
 ## Why Strands SDK?
 
-The agent pipeline is **sequential** (classify â†’ retrieve â†’ generate â†’ validate) with no cycles or dynamic branching. Strands provides a clean `Agent(model, prompt)` abstraction orchestrated with plain Python async/await â€” no graph boilerplate needed.
+The agent pipeline is **sequential** (classify → retrieve → generate → validate) with no cycles or dynamic branching. Strands provides a clean `Agent(model, prompt)` abstraction orchestrated with plain Python async/await — no graph boilerplate needed.
 
 ## License
 
